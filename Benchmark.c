@@ -145,7 +145,7 @@ print_res(void) {
 
 // #define MAXSIZE 100 Changed JG/Ebbe
 
-#define MAXSIZE 100
+#define MAXSIZE 400
 
 
 
