@@ -135,8 +135,8 @@ double fabs(double n)
   else f = -n;
   return f;
 }
-float val;
-float sqrt(val)
+
+float sqrt(float val)
 {
   float x = val/10;
 
