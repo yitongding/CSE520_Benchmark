@@ -127,263 +127,53 @@ print_res(void) {
 /******************************************************/
 /******************************************************/
 
-/* $Id: cnt.c,v 1.3 2005/04/04 11:34:58 csg Exp $ */
+double fabs(double n)
+{
+  double f;
 
+  if (n >= 0) f = n;
+  else f = -n;
+  return f;
+}
 
+float sqrt(val)
+float val;
+{
+  float x = val/10;
 
-/* sumcntmatrix.c */
+  float dx;
 
+  double diff;
+  double min_tol = 0.00001;
 
+  int i, flag;
 
-//#include <sys/types.h>
-
-//#include <sys/times.h>
-
-
-
-// #define WORSTCASE 1
-
-// #define MAXSIZE 100 Changed JG/Ebbe
-
-#define MAXSIZE 200
-
-
-
-// Typedefs
-
-typedef int matrix [MAXSIZE][MAXSIZE];
-
-
-
-// Forwards declarations
-
-static inline void
-workload();
-
-int Test(matrix);
-
-int Initialize(matrix);
-
-int InitSeed(void);
-
-void Sum(matrix);
-
-int RandomInteger(void);
-
-
-
-// Globals
-
-int Seed;
-
-matrix Array;
-
-int Postotal, Negtotal, Poscnt, Negcnt;
-
-
-
-// The main function
+  flag = 0;
+  if (val == 0 ) x = 0;
+  else {
+    for (i=1;i<20;i++)
+      {
+	if (!flag) {
+	  dx = (val - (x*x)) / (2.0 * x);
+	  x = x + dx;
+	  diff = val - (x*x);
+	  if (fabs(diff) <= min_tol) flag = 1;
+	}
+	else 
+	  x =x;
+      }
+  }
+  return (x);
+}
 
 static inline void
 workload()
-
 {
-
-   InitSeed();
-
-   //printf("\n   *** MATRIX SUM AND COUNT BENCHMARK TEST ***\n\n");
-
-   //printf("RESULTS OF THE TEST:\n");
-
-   Test(Array);
-
-   //return 1;
-
+  float x=1234;
+  sqrt(x);
+  //return 0;
 }
 
-
-
-
-
-int Test(matrix Array)
-
-{
-
-   long StartTime, StopTime;
-
-   float TotalTime;
-
-
-
-   Initialize(Array);
-
-   StartTime = 1000.0; //ttime();
-
-   Sum(Array);
-
-   StopTime = 1500.0; //ttime();
-
-
-
-   TotalTime = (StopTime - StartTime) / 1000.0;
-
-
-
-   //printf("    - Size of array is %d\n", MAXSIZE);
-
-   //printf("    - Num pos was %d and Sum was %d\n", Poscnt, Postotal);
-
-   //printf("    - Num neg was %d and Sum was %d\n", Negcnt, Negtotal);
-
-   //printf("    - Num neg was %d\n", Negcnt);
-
-   //printf("    - Total sum time is %3.3f seconds\n\n", TotalTime);
-
-   return 0;
-
-}
-
-
-
-
-
-// Intializes the given array with random integers.
-
-int Initialize(matrix Array)
-
-{
-
-   register int OuterIndex, InnerIndex;
-
-
-
-   for (OuterIndex = 0; OuterIndex < MAXSIZE; OuterIndex++) //100 + 1
-
-      for (InnerIndex = 0; InnerIndex < MAXSIZE; InnerIndex++) //100 + 1
-
-         Array[OuterIndex][InnerIndex] = RandomInteger();
-
-
-
-   return 0;
-
-}
-
-
-
-
-
-// Initializes the seed used in the random number generator.
-
-int InitSeed (void)
-
-{
-
-   Seed = 0;
-
-   return 0;
-
-}
-
-
-
-void Sum(matrix Array)
-
-{
-
-  register int Outer, Inner;
-
-
-
-  int Ptotal = 0; /* changed these to locals in order to drive worst case */
-
-  int Ntotal = 0;
-
-  int Pcnt = 0;
-
-  int Ncnt = 0;
-
-
-
-  for (Outer = 0; Outer < MAXSIZE; Outer++) //Maxsize = 100
-
-    for (Inner = 0; Inner < MAXSIZE; Inner++)
-
-#ifdef WORSTCASE
-
-      if (Array[Outer][Inner] >= 0) {
-
-#else
-
-	if (Array[Outer][Inner] < 0) {
-
-#endif
-
-	  Ptotal += Array[Outer][Inner];
-
-	  Pcnt++;
-
-	}
-
-	else {
-
-	  Ntotal += Array[Outer][Inner];
-
-	  Ncnt++;
-
-	}
-
-
-
-  Postotal = Ptotal;
-
-  Poscnt = Pcnt;
-
-  Negtotal = Ntotal;
-
-  Negcnt = Ncnt;
-
-}
-
-
-
-
-
-// This function returns in milliseconds the amount of compiler time
-
-//int ttime()
-
-//{
-
-//  struct tms buffer;
-
-//int utime;
-
-
-
-//times(&buffer);
-
-//utime = (buffer.tms_utime / 60.0) * 1000.0;
-
-//return (utime);
-
-//}
-
-
-
-
-
-// Generates random integers between 0 and 8095
-
-int RandomInteger(void)
-
-{
-
-   Seed = ((Seed * 133) + 81) % 8095;
-
-   return Seed;
-
-}
 
 
 /******************************************************/
