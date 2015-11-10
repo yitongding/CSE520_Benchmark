@@ -120,7 +120,7 @@ print_res(void) {
         start_time += period*UHZ;	
     }
 	average = all / count;
-	printf("\nTotal %d, AVG %d, WCET %d\n", count, average, wcet_print);
+	printf("\nTotal %d, priority %d, AVG %d, WCET %d\n", count, priority, average, wcet_print);
 }
 
 static inline void
