@@ -242,8 +242,8 @@ main(int argc, char *argv[]) {
         exit(1);
     }
 
-    count = wcet;  /* number of jobs to release */
-    printf("task_count: %d, period: %d, priority: %d\n", wcet, period, priority);
+    count = (duration - 1) / period + 1;  /* number of jobs to release */
+    printf("task_count: %d, period: %d, priority: %d\n", count, period, priority);
 
 	set_sched();
 
