@@ -110,10 +110,10 @@ print_res(void) {
 	int wcet_print = 0;
 	long long int all = 0;
 	int average = 0;
-    //printf("Release         Start           Finish          Latency         ExTime\n");
+    printf("Release         Start           Finish          Latency         ExTime\n");
 	for ( i = 0; i < count; ++i ) 
 	{
-        //printf("%-15lld %-15lld %-15lld %-15lld %-15lld\n", start_time - init_time, data[i].dispatch-init_time, data[i].finish-init_time , data[i].dispatch - start_time, data[i].finish - data[i].dispatch);
+        printf("%-15lld %-15lld %-15lld %-15lld %-15lld\n", start_time - init_time, data[i].dispatch-init_time, data[i].finish-init_time , data[i].dispatch - start_time, data[i].finish - data[i].dispatch);
 	//if (data[i].finish - init_time > start_time - init_time + period*UHZ) miss++;
 	all += data[i].finish - data[i].dispatch;
 	if (data[i].finish - data[i].dispatch > wcet_print) wcet_print = data[i].finish - data[i].dispatch;
