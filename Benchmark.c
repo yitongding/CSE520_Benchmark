@@ -108,16 +108,19 @@ print_res(void) {
 	int i = 0;
 	int miss = 0;
 	int wcet_print = 0;
-    printf("Release         Start           Finish          Latency         ExTime\n");
+	long long int all = 0;
+	int average = 0;
+    //printf("Release         Start           Finish          Latency         ExTime\n");
 	for ( i = 0; i < count; ++i ) 
 	{
-        printf("%-15lld %-15lld %-15lld %-15lld %-15lld\n", start_time - init_time, data[i].dispatch-init_time, data[i].finish-init_time , data[i].dispatch - start_time, data[i].finish - data[i].dispatch);
-	if (data[i].finish - init_time > start_time - init_time + period*UHZ) miss++;	
+        //printf("%-15lld %-15lld %-15lld %-15lld %-15lld\n", start_time - init_time, data[i].dispatch-init_time, data[i].finish-init_time , data[i].dispatch - start_time, data[i].finish - data[i].dispatch);
+	//if (data[i].finish - init_time > start_time - init_time + period*UHZ) miss++;
+	all += data[i].finish - data[i].dispatch;
 	if (data[i].finish - data[i].dispatch > wcet_print) wcet_print = data[i].finish - data[i].dispatch;
         start_time += period*UHZ;	
     }
-
-	printf("\nTotal %d, Deadline Miss %d, Ratio %f, WCET %d\n", count, miss, (float)miss/(float)count, wcet_print);
+	average = all / count;
+	printf("\nTotal %d, AVG %d, WCET %d\n", count, average, wcet_print);
 }
 
 static inline void
@@ -149,9 +152,9 @@ work(int sig, siginfo_t *extra, void *cruft) {
     }
 
 	data[idx].dispatch = *timer_api; //task start time
-    //for ( i = 0; i < wcet; ++i ) {
+    
     workload();
-    //}
+    
     data[idx].finish = *timer_api; //task finish time
 
     ++idx;
