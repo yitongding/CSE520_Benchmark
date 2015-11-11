@@ -194,7 +194,7 @@ workload()
 
    Test(Array);
 
-   return 1;
+   //return 1;
 
 }
 
