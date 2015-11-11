@@ -159,6 +159,7 @@ int Array[MAXDIM], Seed;
 int factor;
 
 static inline void
+workload()
 {
    long  StartTime, StopTime;
    float TotalTime;
