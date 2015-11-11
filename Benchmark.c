@@ -126,135 +126,263 @@ print_res(void) {
 /******************************************************/
 /******************************************************/
 /******************************************************/
-
-/* bsort100.c */
-
-/* All output disabled for wcsim */
-#define WCSIM 1
-
-/* A read from this address will result in an known value of 1 */
-#define KNOWN_VALUE (int)(*((char *)0x80200001))
-
-/* A read from this address will result in an unknown value */
-#define UNKNOWN_VALUE (int)(*((char *)0x80200003))
+/* $Id: cnt.c,v 1.3 2005/04/04 11:34:58 csg Exp $ */
 
 
-#include <sys/types.h>
-#include <sys/times.h>
-#include <stdio.h>
 
-#define WORSTCASE 1
-#define FALSE 0
-#define TRUE 1
-#define NUMELEMS 100
-#define MAXDIM   (NUMELEMS+1)
+/* sumcntmatrix.c */
 
-/* BUBBLESORT BENCHMARK PROGRAM:
- * This program tests the basic loop constructs, integer comparisons,
- * and simple array handling of compilers by sorting 10 arrays of
- * randomly generated integers.
- */
 
-int Array[MAXDIM], Seed;
-int factor;
+
+//#include <sys/types.h>
+
+//#include <sys/times.h>
+
+
+
+// #define WORSTCASE 1
+
+// #define MAXSIZE 100 Changed JG/Ebbe
+
+#define MAXSIZE 10
+
+
+
+// Typedefs
+
+typedef int matrix [MAXSIZE][MAXSIZE];
+
+
+
+// Forwards declarations
+
+
+int Test(matrix);
+
+int Initialize(matrix);
+
+int InitSeed(void);
+
+void Sum(matrix);
+
+int RandomInteger(void);
+
+
+
+// Globals
+
+int Seed;
+
+matrix Array;
+
+int Postotal, Negtotal, Poscnt, Negcnt;
+
+
+
+// The main function
 
 static inline void
 workload()
+
 {
-   long  StartTime, StopTime;
+
+   InitSeed();
+
+   //printf("\n   *** MATRIX SUM AND COUNT BENCHMARK TEST ***\n\n");
+
+   //printf("RESULTS OF THE TEST:\n");
+
+   Test(Array);
+
+   return 1;
+
+}
+
+
+
+
+
+int Test(matrix Array)
+
+{
+
+   long StartTime, StopTime;
+
    float TotalTime;
 
-#ifndef WCSIM
-   printf("\n *** BUBBLE SORT BENCHMARK TEST ***\n\n");
-   printf("RESULTS OF TEST:\n\n");
-#endif
+
+
    Initialize(Array);
-   /*   StartTime = ttime (); */
-   BubbleSort(Array);
-   /*   StopTime = ttime(); */
-   /*   TotalTime = (StopTime - StartTime) / 1000.0; */
-#ifndef WCSIM
-   printf("     - Number of elements sorted is %d\n", NUMELEMS);
-   printf("     - Total time sorting is %3.3f seconds\n\n", TotalTime);
-#endif
+
+   StartTime = 1000.0; //ttime();
+
+   Sum(Array);
+
+   StopTime = 1500.0; //ttime();
+
+
+
+   TotalTime = (StopTime - StartTime) / 1000.0;
+
+
+
+   //printf("    - Size of array is %d\n", MAXSIZE);
+
+   //printf("    - Num pos was %d and Sum was %d\n", Poscnt, Postotal);
+
+   //printf("    - Num neg was %d and Sum was %d\n", Negcnt, Negtotal);
+
+   //printf("    - Num neg was %d\n", Negcnt);
+
+   //printf("    - Total sum time is %3.3f seconds\n\n", TotalTime);
+
+   return 0;
+
 }
 
 
-int ttime()
-/*
- * This function returns in milliseconds the amount of compiler time
- * used prior to it being called.
- */
-{
-   struct tms buffer;
-   int utime;
 
-   /*   times(&buffer);  not implemented */
-   utime = (buffer.tms_utime / 60.0) * 1000.0;
-   return(utime);
+
+
+// Intializes the given array with random integers.
+
+int Initialize(matrix Array)
+
+{
+
+   register int OuterIndex, InnerIndex;
+
+
+
+   for (OuterIndex = 0; OuterIndex < MAXSIZE; OuterIndex++) //100 + 1
+
+      for (InnerIndex = 0; InnerIndex < MAXSIZE; InnerIndex++) //100 + 1
+
+         Array[OuterIndex][InnerIndex] = RandomInteger();
+
+
+
+   return 0;
+
 }
 
 
-Initialize(Array)
-int Array[];
-/*
- * Initializes given array with randomly generated integers.
- */
+
+
+
+// Initializes the seed used in the random number generator.
+
+int InitSeed (void)
+
 {
-   int  Index, fact;
+
+   Seed = 0;
+
+   return 0;
+
+}
+
+
+
+void Sum(matrix Array)
+
+{
+
+  register int Outer, Inner;
+
+
+
+  int Ptotal = 0; /* changed these to locals in order to drive worst case */
+
+  int Ntotal = 0;
+
+  int Pcnt = 0;
+
+  int Ncnt = 0;
+
+
+
+  for (Outer = 0; Outer < MAXSIZE; Outer++) //Maxsize = 100
+
+    for (Inner = 0; Inner < MAXSIZE; Inner++)
 
 #ifdef WORSTCASE
-   factor = -1;
+
+      if (Array[Outer][Inner] >= 0) {
+
 #else
-   factor = 1;
+
+	if (Array[Outer][Inner] < 0) {
+
 #endif
 
-fact = factor;
-for (Index = 1; Index <= NUMELEMS; Index ++)
-    Array[Index] = Index*fact * KNOWN_VALUE;
+	  Ptotal += Array[Outer][Inner];
+
+	  Pcnt++;
+
+	}
+
+	else {
+
+	  Ntotal += Array[Outer][Inner];
+
+	  Ncnt++;
+
+	}
+
+
+
+  Postotal = Ptotal;
+
+  Poscnt = Pcnt;
+
+  Negtotal = Ntotal;
+
+  Negcnt = Ncnt;
+
 }
 
 
 
-BubbleSort(Array)
-int Array[];
-/*
- * Sorts an array of integers of size NUMELEMS in ascending order.
- */
+
+
+// This function returns in milliseconds the amount of compiler time
+
+//int ttime()
+
+//{
+
+//  struct tms buffer;
+
+//int utime;
+
+
+
+//times(&buffer);
+
+//utime = (buffer.tms_utime / 60.0) * 1000.0;
+
+//return (utime);
+
+//}
+
+
+
+
+
+// Generates random integers between 0 and 8095
+
+int RandomInteger(void)
+
 {
-   int Sorted = FALSE;
-   int Temp, LastIndex, Index, i;
 
-   for (i = 1;
-	i <= NUMELEMS-1;           /* apsim_loop 1 0 */
-	i++)
-   {
-      Sorted = TRUE;
-      for (Index = 1;
-	   Index <= NUMELEMS-1;      /* apsim_loop 10 1 */
-	   Index ++) {
-         if (Index > NUMELEMS-i)
-            break;
-         if (Array[Index] > Array[Index + 1])
-         {
-            Temp = Array[Index];
-            Array[Index] = Array[Index+1];
-            Array[Index+1] = Temp;
-            Sorted = FALSE;
-         }
-      }
+   Seed = ((Seed * 133) + 81) % 8095;
 
-      if (Sorted)
-         break;
-   }
+   return Seed;
 
-#ifndef WCSIM
-   if (Sorted || i == 1)
-      fprintf(stderr, "array was successfully sorted in %d passes\n", i-1);
-   else
-      fprintf(stderr, "array was unsuccessfully sorted in %d passes\n", i-1);
-#endif
 }
+
+
 /******************************************************/
 /******************************************************/
 /******************************************************/
