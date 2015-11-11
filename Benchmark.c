@@ -448,7 +448,7 @@ set_sched(void){
 
     struct sched_param sched;
     sched.sched_priority = priority;
-    if (sched_setscheduler(getpid(), SCHED_FIFO, &sched) < 0) {
+    if (sched_setscheduler(getpid(), SCHED_RR, &sched) < 0) {
         perror("sched_setscheduler");
         exit(EXIT_FAILURE);
     }
